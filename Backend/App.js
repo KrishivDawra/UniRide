@@ -13,11 +13,19 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+const corsOptions = {
+  origin: "http://localhost:5173",
+  methods: "GET,POST,PUT,PATCH,DELETE",
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/rides', rideRoutes);

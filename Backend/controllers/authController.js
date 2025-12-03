@@ -7,14 +7,17 @@ const User = require('../models/User');
  */
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, role, mobile, universityId } = req.body;
+    const { name, email, password, role, mobile } = req.body;
 
-    if (!name || !email || !password)
-      return res.status(400).json({ msg: 'Missing required fields' });
+    // Final backend safeguard
+    if (!name || !email || !password || !role || !mobile) {
+      return res.status(400).json({ msg: 'All fields are required' });
+    }
 
     // Check if user exists
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ msg: 'User already exists' });
+    if (existing)
+      return res.status(400).json({ msg: 'User already exists' });
 
     // Hash password
     const hash = await bcrypt.hash(password, 10);
@@ -24,9 +27,8 @@ exports.register = async (req, res, next) => {
       name,
       email,
       password: hash,
-      role: role || 'student',
-      mobile,
-      universityId
+      role,
+      mobile
     });
     await user.save();
 
@@ -58,14 +60,17 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password)
       return res.status(400).json({ msg: 'Provide email and password' });
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
+    if (!user)
+      return res.status(400).json({ msg: 'Invalid credentials' });
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ msg: 'Invalid credentials' });
+    if (!match)
+      return res.status(400).json({ msg: 'Invalid credentials' });
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
