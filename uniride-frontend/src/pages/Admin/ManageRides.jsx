@@ -1,34 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/axios';
 
+export default function ManageRides() {
+  const [rides, setRides] = useState([]);
 
-export default function ManageUsers(){
-const [users,setUsers] = useState([]);
-useEffect(()=>{ api.get('/admin/users').then(r=>setUsers(r.data)).catch(()=>{}); },[]);
+  const fetchRides = async () => {
+    try {
+      const res = await api.get('/admin/rides'); // get all rides for admin
+      setRides(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
+  const cancelRide = async (id) => {
+    if (!window.confirm("Cancel this ride?")) return;
+    try {
+      await api.delete(`/rides/${id}`);
+      setRides(rides.filter(r => r._id !== id));
+    } catch (err) {
+      alert('Failed to cancel ride');
+    }
+  };
 
-const suspend = async id => {
-await api.patch(`/admin/user/${id}/suspend`);
-setUsers(users.map(u=> u._id===id?{...u,suspended:true}:u));
-};
+  useEffect(() => { fetchRides(); }, []);
 
-
-return (
-<div className="p-6 max-w-4xl mx-auto">
-<h1 className="text-2xl font-bold">Manage Users</h1>
-<div className="mt-4 space-y-3">
-{users.map(u=> (
-<div key={u._id} className="p-3 border rounded flex justify-between">
-<div>
-<p className="font-semibold">{u.name} ({u.role})</p>
-<p>{u.email}</p>
-</div>
-<div>
-<button onClick={()=>suspend(u._id)} className="bg-red-600 text-white px-3 py-1 rounded">Suspend</button>
-</div>
-</div>
-))}
-</div>
-</div>
-);
+  return (
+    <div className="p-6 max-w-5xl mx-auto">
+      <h1 className="text-2xl font-bold">Manage Rides</h1>
+      <div className="mt-4 space-y-3">
+        {rides.map(r => (
+          <div key={r._id} className="p-3 border rounded flex justify-between">
+            <div>
+              <p>{r.from} → {r.to}</p>
+              <p>Driver: {r.postedByName}</p>
+              <p>Seats: {r.availableSeats}</p>
+            </div>
+            <div>
+              <button 
+                onClick={() => cancelRide(r._id)} 
+                className="bg-red-600 text-white px-3 py-1 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

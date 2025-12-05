@@ -27,6 +27,11 @@ function App() {
     <>
       <Navbar />
       <Routes>
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<ManageUsers />} />
+        <Route path="/admin/rides" element={<ManageRides />} />
+        <Route path="/admin/bookings" element={<ManageBookings />} />
+        
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
