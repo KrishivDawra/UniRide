@@ -31,7 +31,7 @@ app.use(
    RATE LIMITING
 ========================================= */
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
@@ -52,7 +52,6 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // allow requests with no origin
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
