@@ -8,6 +8,7 @@ export default function Navbar() {
 
   const goDashboard = () => {
     if (!user) return;
+
     if (user.role === 'student') navigate('/student/dashboard');
     else if (user.role === 'driver') navigate('/driver/dashboard');
     else if (user.role === 'admin') navigate('/admin/dashboard');
@@ -17,22 +18,47 @@ export default function Navbar() {
     <nav className="bg-white shadow p-3">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <Link to="/" className="font-bold text-xl">UniRide</Link>
+
         <div className="flex items-center gap-4">
           <Link to="/">Home</Link>
+
+          {user?.role === 'student' && (
+            <Link to="/student/bookings">My Bookings</Link>
+          )}
+
+          {user?.role === 'driver' && (
+            <>
+              <Link to="/driver/create-ride">Create Ride</Link>
+              <Link to="/driver/my-rides">My Rides</Link>
+            </>
+          )}
+
+          {user?.role === 'admin' && (
+            <>
+              <Link to="/admin/users">Users</Link>
+              <Link to="/admin/rides">Rides</Link>
+              <Link to="/admin/bookings">Bookings</Link>
+            </>
+          )}
 
           {user?.role && (
             <button
               onClick={goDashboard}
               className="px-3 py-1 border rounded bg-blue-100"
             >
-              {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              Dashboard
             </button>
           )}
 
           {user ? (
             <>
               <span className="px-2">{user.name}</span>
-              <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Logout</button>
+              <button
+                onClick={logout}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Logout
+              </button>
             </>
           ) : (
             <>

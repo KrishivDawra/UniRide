@@ -7,7 +7,7 @@ export default function DriverDashboard() {
   const [rides, setRides] = useState([]);
 
   useEffect(() => {
-    api.get('/drivers/my-rides')
+    api.get('/rides/driver/my-rides')
       .then(res => setRides(res.data))
       .catch(err => console.log(err));
   }, []);
@@ -16,13 +16,22 @@ export default function DriverDashboard() {
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Driver Dashboard</h1>
-        {/* Correct route */}
-        <Link 
-          to="/driver/create-ride" 
-          className="bg-green-600 text-white px-3 py-2 rounded"
-        >
-          Create Ride
-        </Link>
+
+        <div className="flex gap-3">
+          <Link 
+            to="/driver/create-ride" 
+            className="bg-green-600 text-white px-3 py-2 rounded"
+          >
+            Create Ride
+          </Link>
+
+          <Link 
+            to="/driver/my-rides" 
+            className="bg-blue-600 text-white px-3 py-2 rounded"
+          >
+            My Rides
+          </Link>
+        </div>
       </div>
 
       {rides.length === 0 ? (

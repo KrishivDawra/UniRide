@@ -48,9 +48,9 @@ const rideSchema = new mongoose.Schema({
   ],
 
   status: { 
-    type: String, 
-    enum: ['open','ongoing','completed','cancelled'], 
-    default: 'open' 
+  type: String, 
+  enum: ['open', 'full', 'ongoing', 'completed', 'cancelled'], 
+  default: 'open' 
   },
 
   // Optional but useful for ML dynamic pricing

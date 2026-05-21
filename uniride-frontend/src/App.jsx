@@ -21,6 +21,8 @@ import ManageBookings from "./pages/Admin/ManageBookings.jsx";
 // Components
 import Navbar from "./components/Navbar.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import MyBookings from "./pages/MyBookings.jsx";
+import MyRides from "./pages/MyRides.jsx";
 
 function App() {
   return (
@@ -43,6 +45,25 @@ function App() {
           element={
             <ProtectedRoute roles={["student"]}>
               <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        {/* Student My Bookings */}
+        <Route
+          path="/student/bookings"
+          element={
+            <ProtectedRoute roles={["student"]}>
+              <MyBookings/>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Driver My Rides */}
+        <Route
+          path="/driver/my-rides"
+          element={
+            <ProtectedRoute roles={["driver"]}>
+              <MyRides/>
             </ProtectedRoute>
           }
         />

@@ -56,6 +56,7 @@ router.get(
   rideController.getRide
 );
 
+
 /**
  * @route PATCH /api/rides/:id/cancel
  * @desc Cancel a ride
@@ -68,6 +69,21 @@ router.patch(
   param('id').isMongoId().withMessage('Invalid ride ID'),
   runValidation,
   rideController.cancelRide
+);
+router.get(
+  '/driver/my-rides',
+  authMiddleware,
+  requireRole('driver'),
+  rideController.getMyRides
+);
+
+router.patch(
+  '/:id',
+  authMiddleware,
+  requireRole('driver'),
+  param('id').isMongoId().withMessage('Invalid ride ID'),
+  runValidation,
+  rideController.updateRide
 );
 
 module.exports = router;

@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['student', 'driver', 'admin'], default: 'student' },
   mobile: { type: String },
   verified: { type: Boolean, default: false },
+  suspended: { type: Boolean, default: false },
   profileImage: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 });
