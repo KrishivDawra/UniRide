@@ -21,14 +21,20 @@ app.set('trust proxy', 1);
 /* =========================================
    SECURITY HEADERS
 ========================================= */
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false
+  })
+);
 
 /* =========================================
    RATE LIMITING
 ========================================= */
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 mins
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: {
     msg: 'Too many requests, please try again later.'
   }
@@ -41,18 +47,21 @@ app.use(limiter);
 ========================================= */
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://your-frontend.vercel.app'
+  process.env.FRONTEND_URL
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // allow requests with no origin
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: 'GET,POST,PUT,PATCH,DELETE',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 };
@@ -87,14 +96,27 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/admin', adminRoutes);
 
+/* =========================================
+   HEALTH CHECK
+========================================= */
 app.get('/', (req, res) => {
-  res.json({
+  res.status(200).json({
+    success: true,
     msg: 'UniRide API running successfully'
   });
 });
 
 /* =========================================
-   ERROR HANDLER
+   404 HANDLER
+========================================= */
+app.use((req, res) => {
+  res.status(404).json({
+    msg: 'Route not found'
+  });
+});
+
+/* =========================================
+   GLOBAL ERROR HANDLER
 ========================================= */
 app.use((err, req, res, next) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -102,6 +124,7 @@ app.use((err, req, res, next) => {
   }
 
   res.status(err.status || 500).json({
+    success: false,
     msg: err.message || 'Internal Server Error'
   });
 });
